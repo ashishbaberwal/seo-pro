@@ -7,11 +7,12 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-type Props = { params: { slug: string } }
+type Props = { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+   const { slug } = await params
    const category = await prisma.category.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
    })
 
    if (!category) return { title: 'Category not found' }
@@ -23,8 +24,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CategoryPage({ params }: Props) {
+   const { slug } = await params
    const category = await prisma.category.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
       include: {
          products: {
             where: { isAvailable: true },

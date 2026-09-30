@@ -1,6 +1,5 @@
 import { Separator } from '@/components/native/separator'
 import config from '@/config/site'
-import { GithubIcon, InstagramIcon, TwitterIcon } from 'lucide-react'
 import Link from 'next/link'
 
 const data = [
@@ -88,30 +87,30 @@ function Trademark() {
 
 function Socials() {
    return (
-      <div className="mb-6 flex justify-center space-x-6 text-muted-foreground">
+      <div className="mb-6 flex justify-center space-x-6 text-sm text-muted-foreground">
          <a
-            href="https://instagram.com/sesto_dev"
+            href="https://instagram.com"
             target="_blank"
             rel="noreferrer"
+            className="transition duration-300 hover:text-foreground"
          >
-            <InstagramIcon className="h-4" />
-            <span className="sr-only">Instagram page</span>
+            Instagram
          </a>
          <a
-            href="https://twitter.com/sesto_dev"
+            href="https://x.com"
             target="_blank"
             rel="noreferrer"
+            className="transition duration-300 hover:text-foreground"
          >
-            <TwitterIcon className="h-4" />
-            <span className="sr-only">Twitter page</span>
+            X
          </a>
          <a
-            href="https://github.com/sesto-dev"
+            href="https://github.com"
             target="_blank"
             rel="noreferrer"
+            className="transition duration-300 hover:text-foreground"
          >
-            <GithubIcon className="h-4" />
-            <span className="sr-only">GitHub account</span>
+            GitHub
          </a>
       </div>
    )

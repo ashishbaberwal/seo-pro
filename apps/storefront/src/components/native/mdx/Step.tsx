@@ -1,3 +1,5 @@
+'use client'
+
 export default function Step({ number, title }) {
    return (
       <div className="step flex items-center py-4">

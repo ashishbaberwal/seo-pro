@@ -36,13 +36,16 @@ export function NavMenu() {
          <NavigationMenuList>
             {links.map(({ href, label }) => (
                <NavigationMenuItem key={href}>
-                  <Link href={href} legacyBehavior passHref>
-                     <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  <NavigationMenuLink
+                     asChild
+                     className={navigationMenuTriggerStyle()}
+                  >
+                     <Link href={href}>
                         <div className="font-normal text-foreground/70">
                            {label}
                         </div>
-                     </NavigationMenuLink>
-                  </Link>
+                     </Link>
+                  </NavigationMenuLink>
                </NavigationMenuItem>
             ))}
          </NavigationMenuList>

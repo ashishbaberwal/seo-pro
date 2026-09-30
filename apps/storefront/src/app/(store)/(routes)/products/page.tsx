@@ -11,8 +11,19 @@ import {
    SortBy,
 } from './components/options'
 
-export default async function Products({ searchParams }) {
-   const { sort, isAvailable, brand, category, page = 1 } = searchParams ?? null
+export default async function Products({
+   searchParams,
+}: {
+   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+   const sp = (await searchParams) ?? {}
+   const first = (v: string | string[] | undefined) =>
+      Array.isArray(v) ? v[0] : v
+   const sort = first(sp.sort)
+   const isAvailable = first(sp.isAvailable)
+   const brand = first(sp.brand)
+   const category = first(sp.category)
+   const pageNum = Number(first(sp.page)) || 1
 
    const orderBy = getOrderBy(sort)
 
@@ -37,7 +48,7 @@ export default async function Products({ searchParams }) {
          },
       },
       orderBy,
-      skip: (page - 1) * 12,
+      skip: (pageNum - 1) * 12,
       take: 12,
       include: {
          brand: true,

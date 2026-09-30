@@ -2,39 +2,37 @@ import MDXComponents from '@/components/native/mdx/MDXComponents'
 import { Separator } from '@/components/native/separator'
 import prisma from '@/lib/prisma'
 import { format, parseISO } from 'date-fns'
-import { MDXRemote } from 'next-mdx-remote'
-import { serialize } from 'next-mdx-remote/serialize'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { MDXRemote } from 'next-mdx-remote/rsc'
 
-export default async function Blog({ params }: { params: { slug: string } }) {
+export default async function Blog({ params }: { params: Promise<{ slug: string }> }) {
+   const { slug } = await params
    const blog = await prisma.blog.findUnique({
       where: {
-         slug: params.slug,
-      },
-      include: { author: true },
-   })
+         slug,
+       },
+       include: { author: true },
+    })
 
    if (!blog) notFound()
 
    const recommendations = await prisma.blog.findMany({
-      where: { slug: { not: params.slug } },
+      where: { slug: { not: slug } },
       include: { author: true },
       take: 3,
    })
 
-   const mdx = await serialize(blog.content)
-
    return (
       <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
-         <Content blog={blog} mdx={mdx} />
+         <Content blog={blog} />
          <Recomendations recommendations={recommendations} />
       </div>
    )
 }
 
-function Content({ blog, mdx }) {
+function Content({ blog }) {
    const { title, updatedAt } = blog
 
    return (
@@ -44,7 +42,11 @@ function Content({ blog, mdx }) {
             Last Updated @Date
          </p>
          <Separator />
-         <MDXRemote lazy {...mdx} components={MDXComponents} />
+         <MDXRemote
+            source={blog.content ?? ''}
+            components={MDXComponents}
+            options={{ blockJS: false }}
+         />
       </div>
    )
 }

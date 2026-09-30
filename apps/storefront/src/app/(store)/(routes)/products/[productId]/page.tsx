@@ -8,17 +8,18 @@ import Link from 'next/link'
 import { DataSection } from './components/data'
 
 type Props = {
-   params: { productId: string }
-   searchParams: { [key: string]: string | string[] | undefined }
+   params: Promise<{ productId: string }>
+   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export async function generateMetadata(
-   { params, searchParams }: Props,
+   { params }: Props,
    parent: ResolvingMetadata
 ): Promise<Metadata> {
+   const { productId } = await params
    const product = await prisma.product.findUnique({
       where: {
-         id: params.productId,
+         id: productId,
       },
    })
 
@@ -41,11 +42,12 @@ export async function generateMetadata(
 export default async function Product({
    params,
 }: {
-   params: { productId: string }
+   params: Promise<{ productId: string }>
 }) {
+   const { productId } = await params
    const product = await prisma.product.findUnique({
       where: {
-         id: params.productId,
+         id: productId,
       },
       include: {
          brand: true,

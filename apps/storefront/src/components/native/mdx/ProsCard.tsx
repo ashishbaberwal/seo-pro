@@ -1,3 +1,5 @@
+'use client'
+
 import { CheckSquareIcon } from 'lucide-react'
 
 export default function ProsCard({ title, pros }) {
