@@ -1,7 +1,7 @@
 const config = {
    name: 'Crawl-Smart Catalogue',
    handle: '@crawlsmart',
-   url: 'https://intlipredictoai.tech',
+   url: 'https://seo-pro-ashishbaberwal.vercel.app',
    ogImage:
       'https://og-image.vercel.app/Crawl-Smart Catalogue.png?theme=light&md=1&fontSize=100px',
    description:

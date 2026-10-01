@@ -9,6 +9,16 @@ import { notFound } from 'next/navigation'
 
 type Props = { params: Promise<{ slug: string }> }
 
+export async function generateStaticParams() {
+   const categories = await prisma.category.findMany({
+      where: { slug: { not: null } },
+      select: { slug: true },
+   })
+   return categories
+      .filter((c) => c.slug)
+      .map((c) => ({ slug: c.slug as string }))
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
    const { slug } = await params
    const category = await prisma.category.findUnique({

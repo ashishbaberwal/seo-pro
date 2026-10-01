@@ -5,12 +5,12 @@ export const dynamic = 'force-dynamic'
 const URL = process.env.NEXT_PUBLIC_URL || 'http://localhost:7777'
 
 export default async function sitemap() {
-   const products = (await prisma.product.findMany()).map(
-      ({ id, updatedAt }) => ({
-         url: `${URL}/products/${id}`,
+   const products = (await prisma.product.findMany())
+      .filter((p) => p.slug)
+      .map(({ slug, updatedAt }) => ({
+         url: `${URL}/products/${slug}`,
          lastModified: updatedAt,
-      })
-   )
+      }))
 
    const categories = (await prisma.category.findMany())
       .filter((c) => c.slug)

@@ -1,10 +1,11 @@
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '@prisma/client'
+import { slugify } from '@persepolis/slugify'
 import { Pool } from 'pg'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 const prisma = new PrismaClient({ adapter: new PrismaPg(pool) })
-const img = (seed: string) => `https://picsum.photos/seed/${seed}/800/600`
+const local = (...files: string[]) => files.map((f) => `/images/${f}`)
 
 async function main() {
    // ---------- Brands ----------
@@ -192,35 +193,52 @@ async function main() {
          metadata: { material: 'Recycled ABS with metal clip', dimensions: '28 x 4 x 3 cm', weight: '180 g', compatibility: 'Clips onto edges up to 4 cm' },
       },
    ]
-   for (const p of products) {
-      const slugSeed = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-      await prisma.product.create({
-         data: {
-            title: p.title,
-            description: p.description,
-            images: [img(`${slugSeed}-1`), img(`${slugSeed}-2`)],
-            keywords: p.keywords,
-            metadata: p.metadata,
-            price: p.price,
-            discount: p.discount,
-            stock: p.stock,
-            isAvailable: p.isAvailable,
-            isFeatured: p.isFeatured,
-            brand: { connect: { title: p.brand } },
-            categories: { connect: p.categories.map((s) => ({ slug: s })) },
-         },
-      })
-   }
+    // Local product shots in public/images (same order as products above)
+    const productImages = [
+       local('laptop-stand-1.jpg', 'laptop-stand-2.jpg'),
+       local('laptop-stand-2.jpg', 'laptop-stand-1.jpg'),
+       local('organizer-1.jpg', 'organizer-2.jpg'),
+       local('caddy-1.jpg', 'caddy-2.jpg'),
+       local('mat-large-1.jpg', 'mat-large-2.jpg'),
+       local('mat-small-1.jpg', 'mat-small-2.jpg'),
+       local('cable-box-1.jpg', 'cable-box-2.jpg'),
+       local('cable-tray-1.jpg', 'cable-tray-2.jpg'),
+       local('lamp-1.jpg', 'lamp-2.jpg'),
+       local('cliplight-1.jpg', 'cliplight-2.jpg'),
+    ]
+    for (const [i, p] of products.entries()) {
+       const slug = slugify(p.title)
+       const data = {
+          title: p.title,
+          description: p.description,
+          images: productImages[i],
+          keywords: p.keywords,
+          metadata: p.metadata,
+          price: p.price,
+          discount: p.discount,
+          stock: p.stock,
+          isAvailable: p.isAvailable,
+          isFeatured: p.isFeatured,
+          brand: { connect: { title: p.brand } },
+          categories: { connect: p.categories.map((s) => ({ slug: s })) },
+       }
+       await prisma.product.upsert({
+          where: { slug },
+          update: data,
+          create: { ...data, slug },
+       })
+    }
 
-   // ---------- Banners ----------
-   const banners = [
-      { label: 'Sustainable desk upgrades for small spaces', image: img('banner-desk') },
-      { label: 'Bamboo laptop stands — prototype showcase', image: img('banner-bamboo') },
-      { label: 'Cable management for hostel rooms', image: img('banner-cables') },
-   ]
-   for (const b of banners) {
-      await prisma.banner.create({ data: b })
-   }
+    // ---------- Banners ----------
+    const banners = [
+       { label: 'Sustainable desk upgrades for small spaces', image: '/images/banner-1.jpg' },
+       { label: 'Bamboo laptop stands — prototype showcase', image: '/images/banner-2.jpg' },
+       { label: 'Cable management for hostel rooms', image: '/images/banner-3.jpg' },
+    ]
+    await prisma.banner.deleteMany()
+    for (const b of banners) {
+       await prisma.banner.create({ data: b })
+    }
 
    // ---------- Author + Blogs ----------
    await prisma.author.upsert({
@@ -234,9 +252,9 @@ async function main() {
 
    const blogs = [
       {
-         slug: 'how-to-organize-cables-on-a-small-study-table',
-         title: 'How to Organize Cables on a Small Study Table',
-         image: img('blog-cables'),
+          slug: 'how-to-organize-cables-on-a-small-study-table',
+          title: 'How to Organize Cables on a Small Study Table',
+          image: '/images/blog-cables.jpg',
          description:
             'A five-step method to hide charger sprawl on a study table with a single wall socket — no drilling, hostel-safe.',
          categories: ['cable-management', 'guides'],
@@ -272,9 +290,9 @@ Masking tape flags with "laptop", "phone" and "lamp" save ten minutes every time
 If you buy one thing, make it the cable box: it removes the biggest visual mess in a single step. Clips come second, the tray third.`,
       },
       {
-         slug: 'cork-desk-mat-vs-plastic-desk-mat',
-         title: 'Cork Desk Mat vs Plastic Desk Mat: Which Suits a Hostel Desk?',
-         image: img('blog-cork'),
+          slug: 'cork-desk-mat-vs-plastic-desk-mat',
+          title: 'Cork Desk Mat vs Plastic Desk Mat: Which Suits a Hostel Desk?',
+          image: '/images/blog-cork.jpg',
          description:
             'Comparing cork and plastic desk mats on heat resistance, grip, durability and hostel-friendliness before you choose.',
          categories: ['desk-mats', 'comparisons'],
@@ -294,9 +312,9 @@ Pick a plastic or PU mat if your desk sits near a washbasin, you eat every meal 
 Browse both sizes in our [cork desk mats](/categories/desk-mats) catalogue. All products shown are fictional prototype entries.`,
       },
       {
-         slug: 'small-desk-setup-ideas-for-hostel-rooms',
-         title: 'Small Desk Setup Ideas for Hostel Rooms (Under ₹5,000)',
-         image: img('blog-setup'),
+          slug: 'small-desk-setup-ideas-for-hostel-rooms',
+          title: 'Small Desk Setup Ideas for Hostel Rooms (Under ₹5,000)',
+          image: '/images/blog-setup.jpg',
          description:
             'Three complete small-desk setups — focus, budget and eco picks — built from bamboo, cork and recycled accessories.',
          categories: ['desk-lighting', 'guides'],
@@ -332,20 +350,30 @@ Stands, risers and trays free surface area faster than any organizer.
 Once the layout is fixed, place the lamp opposite your writing hand to kill shadows.`,
       },
    ]
-   for (const b of blogs) {
-      await prisma.blog.create({
-         data: {
-            slug: b.slug,
-            title: b.title,
-            image: b.image,
-            description: b.description,
-            content: b.content,
-            categories: b.categories,
-            keywords: b.keywords,
-            authorId: author.id,
-         },
-      })
-   }
+    for (const b of blogs) {
+       await prisma.blog.upsert({
+          where: { slug: b.slug },
+          update: {
+             title: b.title,
+             image: b.image,
+             description: b.description,
+             content: b.content,
+             categories: b.categories,
+             keywords: b.keywords,
+             authorId: author.id,
+          },
+          create: {
+             slug: b.slug,
+             title: b.title,
+             image: b.image,
+             description: b.description,
+             content: b.content,
+             categories: b.categories,
+             keywords: b.keywords,
+             authorId: author.id,
+          },
+       })
+    }
 
    console.log('Seed complete.')
 }

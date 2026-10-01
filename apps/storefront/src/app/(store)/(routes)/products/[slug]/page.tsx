@@ -1,27 +1,49 @@
 import Carousel from '@/components/native/Carousel'
 import prisma from '@/lib/prisma'
-import { isVariableValid } from '@/lib/utils'
 import { ChevronRightIcon } from 'lucide-react'
 import type { Metadata, ResolvingMetadata } from 'next'
 import Link from 'next/link'
+import { notFound, permanentRedirect } from 'next/navigation'
 
 import { DataSection } from './components/data'
 
 type Props = {
-   params: Promise<{ productId: string }>
+   params: Promise<{ slug: string }>
    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export async function generateStaticParams() {
+   const products = await prisma.product.findMany({
+      where: { slug: { not: null } },
+      select: { slug: true },
+   })
+   return products
+      .filter((p) => p.slug)
+      .map((p) => ({ slug: p.slug as string }))
+}
+
+async function getProduct(slug: string) {
+   const product = await prisma.product.findUnique({
+      where: { slug },
+      include: { brand: true, categories: true },
+   })
+   if (product) return product
+
+   // Legacy cuid URLs (/products/cmx...) permanently redirect to the slug URL
+   const legacy = await prisma.product.findUnique({
+      where: { id: slug },
+      select: { slug: true },
+   })
+   if (legacy?.slug) permanentRedirect(`/products/${legacy.slug}`)
+   return null
 }
 
 export async function generateMetadata(
    { params }: Props,
    parent: ResolvingMetadata
 ): Promise<Metadata> {
-   const { productId } = await params
-   const product = await prisma.product.findUnique({
-      where: {
-         id: productId,
-      },
-   })
+   const { slug } = await params
+   const product = await getProduct(slug)
 
    if (!product) {
       return {
@@ -31,7 +53,7 @@ export async function generateMetadata(
 
    return {
       title: product.title,
-      description: product.description,
+      description: product.description ?? undefined,
       keywords: product.keywords,
       openGraph: {
          images: product.images,
@@ -39,33 +61,21 @@ export async function generateMetadata(
    }
 }
 
-export default async function Product({
-   params,
-}: {
-   params: Promise<{ productId: string }>
-}) {
-   const { productId } = await params
-   const product = await prisma.product.findUnique({
-      where: {
-         id: productId,
-      },
-      include: {
-         brand: true,
-         categories: true,
-      },
-   })
+export default async function Product({ params }: Props) {
+   const { slug } = await params
+   const product = await getProduct(slug)
 
-   if (isVariableValid(product)) {
-      return (
-         <>
-            <Breadcrumbs product={product} />
-            <div className="mt-6 grid grid-cols-1 gap-2 md:grid-cols-3">
-               <ImageColumn product={product} />
-               <DataSection product={product} />
-            </div>
-         </>
-      )
-   }
+   if (!product) notFound()
+
+   return (
+      <>
+         <Breadcrumbs product={product} />
+         <div className="mt-6 grid grid-cols-1 gap-2 md:grid-cols-3">
+            <ImageColumn product={product} />
+            <DataSection product={product} />
+         </div>
+      </>
+   )
 }
 
 const ImageColumn = ({ product }) => {
