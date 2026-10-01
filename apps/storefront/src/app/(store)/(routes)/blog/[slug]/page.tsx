@@ -44,10 +44,10 @@ function Content({ blog }) {
 
    return (
       <div className="rounded-lg bg-white p-6 text-justify text-neutral-900 dark:bg-neutral-800 dark:text-neutral-200 md:col-span-3">
-         <h1 className="mb-1 text-3xl font-medium">{title}</h1>
-         <p className="mt-2 text-sm font-medium text-neutral-400">
-            Last Updated @Date
-         </p>
+          <h1 className="mb-1 text-3xl font-medium">{title}</h1>
+          <p className="mt-2 text-sm font-medium text-neutral-400">
+             Last updated {format(new Date(updatedAt), 'MMMM d, yyyy')}
+          </p>
          <Separator />
          <MDXRemote
             source={blog.content ?? ''}
@@ -83,9 +83,12 @@ function Recomendations({ recommendations }) {
                               <h5 className="mb-3 text-justify font-medium tracking-tight text-neutral-900 dark:text-white">
                                  {title}
                               </h5>
-                              <p className="block text-sm text-neutral-700 dark:text-neutral-400">
-                                 <span>{author?.name}, Date</span>
-                              </p>
+                               <p className="block text-sm text-neutral-700 dark:text-neutral-400">
+                                  <span>
+                                     {author?.name} ·{' '}
+                                     {format(new Date(createdAt), 'MMM d, yyyy')}
+                                  </span>
+                               </p>
                            </div>
                         </div>
                      </div>

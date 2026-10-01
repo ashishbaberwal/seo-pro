@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card'
 import Image from 'next/image'
 import Link from 'next/link'
+import { format } from 'date-fns'
 
 export function BlogPostGrid({ blogs }) {
    return (
@@ -53,7 +54,9 @@ export function BlogPostCard({ post }) {
             </CardContent>
             <CardFooter>
                <p className="block text-sm text-neutral-700 dark:text-neutral-400">
-                  <span>{author?.name}</span>
+                  <span>
+                     {author?.name} · {format(new Date(createdAt), 'MMM d, yyyy')}
+                  </span>
                </p>
             </CardFooter>
          </Card>

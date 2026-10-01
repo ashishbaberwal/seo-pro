@@ -1,8 +1,11 @@
 import { ThemeProvider } from '@/providers/theme-provider'
 import { ToastProvider } from '@/providers/toast-provider'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 
 export const metadata = {
+   metadataBase: new URL('https://seo-pro-ashishbaberwal.vercel.app/'),
    title: {
       default: 'Crawl-Smart Catalogue | Sustainable Desk Accessories (Class Prototype)',
       template: '%s | Crawl-Smart Catalogue',
@@ -32,6 +35,8 @@ export default async function RootLayout({
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
                <ToastProvider />
                {children}
+               <Analytics />
+               <SpeedInsights />
             </ThemeProvider>
          </body>
       </html>
