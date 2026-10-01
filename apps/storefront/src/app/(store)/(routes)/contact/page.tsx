@@ -15,6 +15,7 @@ export default function Contact() {
          <Heading
             title="Contact"
             description="Reach the student team behind this class prototype."
+            level={1}
          />
          <Separator className="my-4" />
          <div className="max-w-3xl space-y-4 text-sm leading-6 text-justify">

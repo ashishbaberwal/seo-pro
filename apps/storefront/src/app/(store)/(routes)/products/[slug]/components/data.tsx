@@ -15,15 +15,15 @@ export const DataSection = async ({
          return (
             <div className="flex gap-2 items-center">
                <Badge className="flex gap-4" variant="destructive">
-                  <div className="line-through">₹{product?.price}</div>
+                  <p className="line-through">₹{product?.price}</p>
                   <div>{percentage.toFixed(0)}% off</div>
                </Badge>
-               <h2 className="">₹{price.toFixed(0)}</h2>
-            </div>
-         )
-      }
+                <p className="">₹{price.toFixed(0)}</p>
+             </div>
+          )
+       }
 
-      return <h2>₹{product?.price}</h2>
+       return <p>₹{product?.price}</p>
    }
 
    const specs: Record<string, string> =
@@ -31,7 +31,7 @@ export const DataSection = async ({
 
    return (
       <div className="col-span-2 w-full rounded-lg bg-neutral-100 p-6 dark:bg-neutral-900">
-         <h3 className="mb-4 text-xl font-medium">{product.title}</h3>
+         <h1 className="mb-4 text-xl font-medium">{product.title}</h1>
          <Separator />
          <div className="flex gap-2 mb-2 items-center">
             <p className="text-sm">Brand:</p>

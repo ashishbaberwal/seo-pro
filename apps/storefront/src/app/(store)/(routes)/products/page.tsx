@@ -69,6 +69,7 @@ export default async function Products({
          <Heading
             title="Products"
             description="The full prototype catalogue. Use the filters to narrow by brand, category or availability."
+            level={1}
          />
          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-4">
             <SortBy initialData={sort} />

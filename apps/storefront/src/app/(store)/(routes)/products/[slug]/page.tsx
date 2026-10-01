@@ -1,4 +1,9 @@
 import Carousel from '@/components/native/Carousel'
+import {
+   JsonLd,
+   SITE_URL,
+   breadcrumbList,
+} from '@/components/seo/json-ld'
 import prisma from '@/lib/prisma'
 import { ChevronRightIcon } from 'lucide-react'
 import type { Metadata, ResolvingMetadata } from 'next'
@@ -67,8 +72,38 @@ export default async function Product({ params }: Props) {
 
    if (!product) notFound()
 
+   const pageSlug = (product.slug ?? slug) as string
+   const productSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: product.title,
+      description: product.description ?? undefined,
+      image: product.images.map((src) =>
+         src.startsWith('http') ? src : `${SITE_URL}${src}`
+      ),
+      brand: { '@type': 'Brand', name: product.brand?.title },
+      category: product.categories.map((c) => c.title).join(', ') || undefined,
+      offers: {
+         '@type': 'Offer',
+         priceCurrency: 'INR',
+         price: Math.max(product.price - product.discount, 0).toFixed(0),
+         availability: product.stock > 0
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/OutOfStock',
+         url: `${SITE_URL}/products/${pageSlug}`,
+      },
+   }
+
    return (
       <>
+         <JsonLd data={productSchema} />
+         <JsonLd
+            data={breadcrumbList([
+               { name: 'Home', path: '/' },
+               { name: 'Products', path: '/products' },
+               { name: product.title, path: `/products/${pageSlug}` },
+            ])}
+         />
          <Breadcrumbs product={product} />
          <div className="mt-6 grid grid-cols-1 gap-2 md:grid-cols-3">
             <ImageColumn product={product} />

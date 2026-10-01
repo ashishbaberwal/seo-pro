@@ -23,6 +23,7 @@ export default async function Categories() {
          <Heading
             title="Categories"
             description="Five catalogue sections, one per search intent. Pick a section to see its products."
+            level={1}
          />
          <Separator className="my-4" />
          <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-3 lg:grid-cols-3">

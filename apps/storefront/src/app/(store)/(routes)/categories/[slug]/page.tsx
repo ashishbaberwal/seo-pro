@@ -1,6 +1,11 @@
 import { ProductGrid } from '@/components/native/Product'
 import { Heading } from '@/components/native/heading'
 import { Separator } from '@/components/native/separator'
+import {
+   JsonLd,
+   SITE_URL,
+   breadcrumbList,
+} from '@/components/seo/json-ld'
 import prisma from '@/lib/prisma'
 import { ChevronRightIcon } from 'lucide-react'
 import type { Metadata } from 'next'
@@ -50,8 +55,29 @@ export default async function CategoryPage({ params }: Props) {
 
    if (!category) notFound()
 
+   const categorySlug = (category.slug ?? slug) as string
+   const itemList = {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: category.title,
+      itemListElement: category.products.map((p, i) => ({
+         '@type': 'ListItem',
+         position: i + 1,
+         name: p.title,
+         item: `${SITE_URL}/products/${(p as { slug?: string | null }).slug ?? p.id}`,
+      })),
+   }
+
    return (
       <>
+         <JsonLd data={itemList} />
+         <JsonLd
+            data={breadcrumbList([
+               { name: 'Home', path: '/' },
+               { name: 'Categories', path: '/categories' },
+               { name: category.title, path: `/categories/${categorySlug}` },
+            ])}
+         />
          <nav className="flex text-muted-foreground" aria-label="Breadcrumb">
             <ol className="inline-flex items-center gap-2">
                <li className="inline-flex items-center">
@@ -75,7 +101,7 @@ export default async function CategoryPage({ params }: Props) {
                </li>
             </ol>
          </nav>
-         <Heading title={category.title} description={category.description ?? ''} />
+         <Heading title={category.title} description={category.description ?? ''} level={1} />
          <Separator className="my-4" />
          {category.products.length ? (
             <ProductGrid products={category.products} />

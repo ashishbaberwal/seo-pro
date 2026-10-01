@@ -15,6 +15,7 @@ export default function About() {
          <Heading
             title="About this catalogue"
             description="What Crawl-Smart is, who it is for, and why nothing here can be bought."
+            level={1}
          />
          <Separator className="my-4" />
          <div className="max-w-3xl space-y-4 text-sm leading-6 text-justify">

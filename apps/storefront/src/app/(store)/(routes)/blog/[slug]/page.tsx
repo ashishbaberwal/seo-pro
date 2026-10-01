@@ -1,5 +1,10 @@
 import MDXComponents from '@/components/native/mdx/MDXComponents'
 import { Separator } from '@/components/native/separator'
+import {
+   JsonLd,
+   SITE_URL,
+   breadcrumbList,
+} from '@/components/seo/json-ld'
 import prisma from '@/lib/prisma'
 import { format, parseISO } from 'date-fns'
 import type { Metadata } from 'next'
@@ -45,6 +50,20 @@ export default async function Blog({ params }: { params: Promise<{ slug: string 
 
    if (!blog) notFound()
 
+   const articleSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: blog.title,
+      description: blog.description,
+      image: blog.image.startsWith('http')
+         ? [blog.image]
+         : [`${SITE_URL}${blog.image}`],
+      author: { '@type': 'Person', name: blog.author?.name ?? 'Crawl-Smart Team' },
+      datePublished: new Date(blog.createdAt).toISOString(),
+      dateModified: new Date(blog.updatedAt).toISOString(),
+      mainEntityOfPage: `${SITE_URL}/blog/${blog.slug}`,
+   }
+
    const recommendations = await prisma.blog.findMany({
       where: { slug: { not: slug } },
       include: { author: true },
@@ -53,6 +72,14 @@ export default async function Blog({ params }: { params: Promise<{ slug: string 
 
    return (
       <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+         <JsonLd data={articleSchema} />
+         <JsonLd
+            data={breadcrumbList([
+               { name: 'Home', path: '/' },
+               { name: 'Blog', path: '/blog' },
+               { name: blog.title, path: `/blog/${blog.slug}` },
+            ])}
+         />
          <Content blog={blog} />
          <Recomendations recommendations={recommendations} />
       </div>

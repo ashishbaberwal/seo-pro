@@ -44,15 +44,15 @@ export const Product = ({ product }: { product: ProductWithIncludes }) => {
          return (
             <div className="flex gap-2 items-center">
                <Badge className="flex gap-4" variant="destructive">
-                  <div className="line-through">₹{product?.price}</div>
+                  <p className="line-through">₹{product?.price}</p>
                   <div>{percentage.toFixed(0)}% off</div>
                </Badge>
-               <h2 className="">₹{price.toFixed(0)}</h2>
+                <p className="">₹{price.toFixed(0)}</p>
             </div>
          )
       }
 
-      return <h2>₹{product?.price}</h2>
+      return <p>₹{product?.price}</p>
    }
 
    return (
