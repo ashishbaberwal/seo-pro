@@ -49,6 +49,18 @@ CWV is now collecting via Speed Insights.
 ## 5. Known limitation
 
 Rubric item 5 names VPS + Cloudflare + WordPress; this build is Vercel +
-Vercel DNS + Next.js (see `04-architecture-roadmap.md` §4). Everything that
-item functionally requires (public deployment, managed DNS, valid SSL) is
+Vercel DNS + Next.js (see `04-architecture-roadmap.md` §4 and
+`06-cloudflare-runbook.md` for the executable Cloudflare migration). Everything
+that item functionally requires (public deployment, managed DNS, valid SSL) is
 demonstrated above — only the named stack differs, pending instructor ruling.
+
+## 6. Post-report updates (2026-10-01)
+
+- Canonical host consolidated to `https://intlipredictoai.tech` (sitemap,
+  robots, canonicals, OG, JSON-LD all match the Search Console property).
+- GA4 live (`G-560HC9FY3H` firing on all pages, verified in HTML).
+- Search Console property verified via meta tag; `sitemap.xml` submitted.
+- Structured data live: Organization, WebSite, Product+Offer, BreadcrumbList,
+  ItemList, BlogPosting (verified in rendered HTML).
+- One H1 per page; canonical link on all 10 page types; 4th guide
+  (`bamboo-vs-plastic-desk-accessories`) published.
