@@ -7,6 +7,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 
+export const dynamicParams = false
+
 export async function generateStaticParams() {
    const blogs = await prisma.blog.findMany({ select: { slug: true } })
    return blogs.map((b) => ({ slug: b.slug }))

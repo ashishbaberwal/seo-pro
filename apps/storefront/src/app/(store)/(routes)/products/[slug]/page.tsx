@@ -3,9 +3,11 @@ import prisma from '@/lib/prisma'
 import { ChevronRightIcon } from 'lucide-react'
 import type { Metadata, ResolvingMetadata } from 'next'
 import Link from 'next/link'
-import { notFound, permanentRedirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 
 import { DataSection } from './components/data'
+
+export const dynamicParams = false
 
 type Props = {
    params: Promise<{ slug: string }>
@@ -23,19 +25,12 @@ export async function generateStaticParams() {
 }
 
 async function getProduct(slug: string) {
-   const product = await prisma.product.findUnique({
+   // Legacy cuid URLs (/products/cmx...) are 308-redirected by src/proxy.ts,
+   // so by the time we render here `slug` is always a real slug.
+   return prisma.product.findUnique({
       where: { slug },
       include: { brand: true, categories: true },
    })
-   if (product) return product
-
-   // Legacy cuid URLs (/products/cmx...) permanently redirect to the slug URL
-   const legacy = await prisma.product.findUnique({
-      where: { id: slug },
-      select: { slug: true },
-   })
-   if (legacy?.slug) permanentRedirect(`/products/${legacy.slug}`)
-   return null
 }
 
 export async function generateMetadata(
@@ -43,7 +38,11 @@ export async function generateMetadata(
    parent: ResolvingMetadata
 ): Promise<Metadata> {
    const { slug } = await params
-   const product = await getProduct(slug)
+   // NOTE: no redirect here — redirect() is not supported in generateMetadata.
+   // Legacy cuid URLs are handled by the page component below.
+   const product = await prisma.product.findUnique({
+      where: { slug },
+   })
 
    if (!product) {
       return {

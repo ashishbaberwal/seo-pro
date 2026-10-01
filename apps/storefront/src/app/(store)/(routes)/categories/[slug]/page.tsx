@@ -9,6 +9,8 @@ import { notFound } from 'next/navigation'
 
 type Props = { params: Promise<{ slug: string }> }
 
+export const dynamicParams = false
+
 export async function generateStaticParams() {
    const categories = await prisma.category.findMany({
       where: { slug: { not: null } },
