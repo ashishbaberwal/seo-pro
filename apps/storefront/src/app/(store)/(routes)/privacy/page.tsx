@@ -1,4 +1,12 @@
 import config from '@/config/site'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+   title: 'Privacy Policy',
+   description:
+      'Privacy policy of the Crawl-Smart Catalogue class prototype: what demo data is stored and why.',
+   alternates: { canonical: '/privacy' },
+}
 
 export default function PrivacyPolicy() {
    return (

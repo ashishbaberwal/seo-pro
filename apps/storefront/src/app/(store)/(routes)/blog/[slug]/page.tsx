@@ -2,6 +2,7 @@ import MDXComponents from '@/components/native/mdx/MDXComponents'
 import { Separator } from '@/components/native/separator'
 import prisma from '@/lib/prisma'
 import { format, parseISO } from 'date-fns'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -12,6 +13,25 @@ export const dynamicParams = false
 export async function generateStaticParams() {
    const blogs = await prisma.blog.findMany({ select: { slug: true } })
    return blogs.map((b) => ({ slug: b.slug }))
+}
+
+export async function generateMetadata({
+   params,
+}: {
+   params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+   const { slug } = await params
+   const blog = await prisma.blog.findUnique({ where: { slug } })
+
+   if (!blog) return { title: 'Guide not found' }
+
+   return {
+      title: blog.title,
+      description: blog.description,
+      keywords: blog.keywords,
+      alternates: { canonical: `/blog/${blog.slug}` },
+      openGraph: { images: [blog.image] },
+   }
 }
 
 export default async function Blog({ params }: { params: Promise<{ slug: string }> }) {

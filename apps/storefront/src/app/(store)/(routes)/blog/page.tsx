@@ -1,7 +1,15 @@
 import { BlogPostCard } from '@/components/native/BlogCard'
 import prisma from '@/lib/prisma'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+   title: 'Buying guides',
+   description:
+      'Short, honest buying guides for small-desk setups: cable organization, cork vs plastic mats, and hostel-room desk ideas.',
+   alternates: { canonical: '/blog' },
+}
 
 export default async function Index() {
    const blogs = await prisma.blog.findMany({

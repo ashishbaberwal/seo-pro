@@ -3,6 +3,14 @@ import { Heading } from '@/components/native/heading'
 import { Separator } from '@/components/native/separator'
 import prisma from '@/lib/prisma'
 import { isVariableValid } from '@/lib/utils'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+   title: 'Products',
+   description:
+      'The full prototype catalogue: bamboo laptop stands, recycled organizers, cork desk mats, cable management and desk lighting. Filter by brand, category or availability.',
+   alternates: { canonical: '/products' },
+}
 
 import {
    AvailableToggle,

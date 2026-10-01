@@ -9,6 +9,7 @@ export const metadata: Metadata = {
    title: 'Categories',
    description:
       'Browse sustainable desk accessory categories: bamboo laptop stands, recycled organizers, cork desk mats, cable management and desk lighting.',
+   alternates: { canonical: '/categories' },
 }
 
 export default async function Categories() {

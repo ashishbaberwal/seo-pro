@@ -10,9 +10,14 @@ import { Separator } from '@/components/native/separator'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import prisma from '@/lib/prisma'
 import { isVariableValid } from '@/lib/utils'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+   alternates: { canonical: '/' },
+}
 
 export default async function Index() {
    const featured = await prisma.product.findMany({

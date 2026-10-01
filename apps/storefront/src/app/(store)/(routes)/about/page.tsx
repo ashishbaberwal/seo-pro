@@ -6,6 +6,7 @@ export const metadata: Metadata = {
    title: 'About',
    description:
       'About the Crawl-Smart Catalogue: a class SEO prototype for sustainable desk accessories with transactions disabled.',
+   alternates: { canonical: '/about' },
 }
 
 export default function About() {

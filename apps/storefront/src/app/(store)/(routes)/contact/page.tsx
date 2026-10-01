@@ -6,6 +6,7 @@ export const metadata: Metadata = {
    title: 'Contact',
    description:
       'Contact the student team behind the Crawl-Smart Catalogue class prototype.',
+   alternates: { canonical: '/contact' },
 }
 
 export default function Contact() {
