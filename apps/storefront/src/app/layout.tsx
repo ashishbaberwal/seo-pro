@@ -6,7 +6,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 
 export const metadata = {
-   metadataBase: new URL('https://seo-pro-ashishbaberwal.vercel.app/'),
+   metadataBase: new URL('https://intlipredictoai.tech/'),
    ...(process.env.NEXT_PUBLIC_GSC_VERIFICATION
       ? { verification: { google: process.env.NEXT_PUBLIC_GSC_VERIFICATION } }
       : {}),
