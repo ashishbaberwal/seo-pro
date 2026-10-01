@@ -1,5 +1,4 @@
 import { ThemeProvider } from '@/providers/theme-provider'
-import { ToastProvider } from '@/providers/toast-provider'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
@@ -33,7 +32,6 @@ export default async function RootLayout({
       <html lang="en">
          <body>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-               <ToastProvider />
                {children}
                <Analytics />
                <SpeedInsights />
